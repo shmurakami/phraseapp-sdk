@@ -12,6 +12,14 @@
         "phpunit/phpunit": "^7.2"
     },
     "autoload": {
-        "shmurakami\\PhraseAppSDK\\": "src/"
+        "psr-4": {
+            "shmurakami\\PhraseAppSDK\\": "src/",
+            "shmurakami\\PhraseAppSDK\\Tests\\": "tests/"
+        }
+    },
+    "script": {
+        "test": [
+            "phpunit tests"
+        ]
     }
 }
