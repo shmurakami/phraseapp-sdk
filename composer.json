@@ -22,7 +22,7 @@
             "shmurakami\\PhraseAppSDK\\Tests\\": "tests/"
         }
     },
-    "script": {
+    "scripts": {
         "test": [
             "phpunit tests"
         ]
