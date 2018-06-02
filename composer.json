@@ -1,0 +1,14 @@
+{
+    "name": "shmurakami/phraseapp-sdk",
+    "description": "Non official PhraseApp PHP SDK",
+    "authors": [
+        {
+            "name": "shmurakami",
+            "email": "shmurakami1104@gmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.3",
+        "phpunit/phpunit": "^7.2"
+    }
+}
