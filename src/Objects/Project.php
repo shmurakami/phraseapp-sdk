@@ -6,6 +6,15 @@ use shmurakami\PhraseAppSDK\Cursor;
 use shmurakami\PhraseAppSDK\Exceptions\Http\RequestException;
 use shmurakami\PhraseAppSDK\PhraseAppApi;
 
+/**
+ * @property-read string id
+ * @property-read string name
+ * @property-read string main_format
+ * @property-read string project_image_url
+ * @property-read string account
+ * @property-read string created_at
+ * @property-read string updated_at
+ */
 class Project extends AbstractObject
 {
     /**

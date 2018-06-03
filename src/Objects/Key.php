@@ -2,6 +2,17 @@
 
 namespace shmurakami\PhraseAppSDK\Objects;
 
+/**
+ * @property-read string id
+ * @property-read string name
+ * @property-read string description
+ * @property-read string name_hash
+ * @property-read bool plural
+ * @property-read string[] tags
+ * @property-read string data_type
+ * @property-read string created_at
+ * @property-read string updated_at
+ */
 class Key extends AbstractObject
 {
     /**
