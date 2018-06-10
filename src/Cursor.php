@@ -56,6 +56,15 @@ class Cursor implements ArrayAccess, Iterator
 
     public function next()
     {
+        if (count($this->objects) >= $this->position) {
+            // TODO get next
+            $objects = [];
+            foreach ($objects as $object) {
+                $this->objects[] = $object;
+            }
+            // TODO cursor needs response
+        }
+
         $this->position++;
     }
 
