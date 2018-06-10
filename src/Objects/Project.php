@@ -19,6 +19,8 @@ class Project extends AbstractObject
 {
     /**
      * @noinspection PhpMissingParentConstructorInspection
+     * @param $projectId
+     * @param PhraseAppApi $api
      */
     public function __construct($projectId, PhraseAppApi $api)
     {
@@ -33,37 +35,16 @@ class Project extends AbstractObject
      */
     public function getLocales()
     {
-        $baseLocale = new Locale($this->projectId, null, $this->getApi());
-        $url = $baseLocale->buildUrl();
-        $responses = $this->getApi()->getRequest()->get($url);
-        $locales = [];
-        foreach ($responses as $response) {
-            $id = $response['id'];
-            $locale = new Locale($this->projectId, $id, $this->getApi());
-            $locale->setData($response);
-            $locales[] = $locale;
-        }
-        return new Cursor($locales);
+        return $this->getRelatedObjects(Locale::class, $this->projectId);
     }
 
     /**
      * @return Cursor|Key[]
      * @throws RequestException
-     * TODO extract as getChilds with instance Arg
      */
     public function getKeys()
     {
-        $baseKey = new Key($this->projectId, null, $this->getApi());
-        $url = $baseKey->buildUrl();
-        $responses = $this->getApi()->getRequest()->get($url);
-        $keys = [];
-        foreach ($responses as $response) {
-            $id = $response['id'];
-            $key = new Key($this->projectId, $id, $this->getApi());
-            $key->setData($response);
-            $keys[] = $key;
-        }
-        return new Cursor($keys);
+        return $this->getRelatedObjects(Key::class, $this->projectId);
     }
 
     /**

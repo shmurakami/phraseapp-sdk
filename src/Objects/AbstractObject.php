@@ -2,6 +2,8 @@
 
 namespace shmurakami\PhraseAppSDK\Objects;
 
+use shmurakami\PhraseAppSDK\Cursor;
+use shmurakami\PhraseAppSDK\Exceptions\Http\RequestException;
 use shmurakami\PhraseAppSDK\PhraseAppApi;
 
 abstract class AbstractObject
@@ -25,6 +27,9 @@ abstract class AbstractObject
 
     /**
      * AbstractEntity constructor.
+     * @param string $projectId
+     * @param string $entityId
+     * @param PhraseAppApi $api
      */
     public function __construct($projectId, $entityId, PhraseAppApi $api)
     {
@@ -68,6 +73,30 @@ abstract class AbstractObject
     public function setData(array $data)
     {
         $this->data = $data;
+    }
+
+    /**
+     * @param string $className
+     * @param string $parentId
+     * @param string"null $instanceId
+     * @return Cursor
+     * @throws RequestException
+     */
+    protected function getRelatedObjects($className, $parentId, $instanceId = null)
+    {
+        /** @var AbstractObject $baseKey */
+        $baseKey = new $className($parentId, $instanceId, $this->getApi());
+        $url = $baseKey->buildUrl();
+        $responses = $this->getApi()->getRequest()->get($url);
+        $objects = [];
+        foreach ($responses as $response) {
+            $id = $response['id'];
+            /** @var AbstractObject $object */
+            $object = new $className($parentId, $id, $this->getApi());
+            $object->setData($response);
+            $objects[] = $object;
+        }
+        return new Cursor($objects);
     }
 
     /**
