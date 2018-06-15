@@ -15,10 +15,6 @@ class PhraseAppApi
      * @var Request
      */
     private $request;
-    /**
-     * @var string
-     */
-    private $accessToken;
 
     /**
      * PhraseAppAPI constructor.
@@ -27,8 +23,7 @@ class PhraseAppApi
      */
     public function __construct($accessToken, $config = [])
     {
-        $this->accessToken = $accessToken;
-        $this->request = new Request($config);
+        $this->request = new Request($accessToken, $config);
     }
 
     /**

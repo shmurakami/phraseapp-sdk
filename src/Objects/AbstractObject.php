@@ -84,19 +84,11 @@ abstract class AbstractObject
      */
     protected function getRelatedObjects($className, $parentId, $instanceId = null)
     {
-        /** @var AbstractObject $baseKey */
-        $baseKey = new $className($parentId, $instanceId, $this->getApi());
-        $url = $baseKey->buildUrl();
-        $responses = $this->getApi()->getRequest()->get($url);
-        $objects = [];
-        foreach ($responses as $response) {
-            $id = $response['id'];
-            /** @var AbstractObject $object */
-            $object = new $className($parentId, $id, $this->getApi());
-            $object->setData($response);
-            $objects[] = $object;
-        }
-        return new Cursor($objects);
+        /** @var AbstractObject $prototypeObject */
+        $prototypeObject = new $className($parentId, $instanceId, $this->getApi());
+        $url = $prototypeObject->buildUrl();
+        $response = $this->getApi()->getRequest()->get($url);
+        return new Cursor($response, $prototypeObject);
     }
 
     /**

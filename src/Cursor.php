@@ -4,6 +4,8 @@ namespace shmurakami\PhraseAppSDK;
 
 use ArrayAccess;
 use Iterator;
+use shmurakami\PhraseAppSDK\Http\Response;
+use shmurakami\PhraseAppSDK\Http\ResponseInterface;
 use shmurakami\PhraseAppSDK\Objects\AbstractObject;
 
 /**
@@ -19,10 +21,40 @@ class Cursor implements ArrayAccess, Iterator
      * @var int iterator current position
      */
     private $position = 0;
+    /**
+     * @var int fetched object count
+     */
+    private $itemCount = 0;
+    /**
+     * @var int request page parameter
+     */
+    private $page = 1;
+    /**
+     * @var Response
+     */
+    private $response;
+    /**
+     * @var AbstractObject
+     */
+    private $prototypeObject;
 
-    public function __construct(array $objects)
+    public function __construct(Response $response, AbstractObject $prototypeObject)
     {
-        $this->objects = $objects;
+        $this->response = $response;
+        $this->prototypeObject = $prototypeObject;
+
+        $this->setObjectFromResponse($response);
+    }
+
+    private function setObjectFromResponse(ResponseInterface $response)
+    {
+        $contents = $response->getContents();
+        foreach ($contents as $content) {
+            $object = clone $this->prototypeObject;
+            $object->setData($content);
+            $this->objects[] = $object;
+        }
+        $this->itemCount = count($this->objects);
     }
 
     public function offsetExists($offset)
@@ -56,16 +88,11 @@ class Cursor implements ArrayAccess, Iterator
 
     public function next()
     {
-        if (count($this->objects) >= $this->position) {
-            // TODO get next
-            $objects = [];
-            foreach ($objects as $object) {
-                $this->objects[] = $object;
-            }
-            // TODO cursor needs response
-        }
-
         $this->position++;
+        if ($this->itemCount == $this->position) {
+            $response = $this->requestNextPage();
+            $this->setObjectFromResponse($response);
+        }
     }
 
     public function key()
@@ -81,5 +108,18 @@ class Cursor implements ArrayAccess, Iterator
     public function rewind()
     {
         $this->position = 0;
+    }
+
+    /**
+     * @return ResponseInterface
+     * @throws Exceptions\Http\RequestException
+     */
+    private function requestNextPage()
+    {
+        $page = ++$this->page;
+        // todo how to get last url? where is good to keep url?
+        $nextPageUrl = '';
+        // todo need to keep additional header
+        return $this->response->getRequest()->get($nextPageUrl);
     }
 }

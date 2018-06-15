@@ -5,7 +5,7 @@ namespace shmurakami\PhraseAppSDK\Http;
 use GuzzleHttp\Client;
 use shmurakami\PhraseAppSDK\Exceptions\Http\RequestException;
 
-class Request
+class Request implements RequestInterface
 {
     const BASE_URL = 'https://api.phraseapp.com/api/v2/';
 
@@ -19,15 +19,20 @@ class Request
      */
     private $accedssToken = '';
 
-    public function __construct($config = [])
+    /**
+     * @param string $accessToken
+     * @param array $config
+     */
+    public function __construct($accessToken, $config = [])
     {
+        $this->accedssToken = $accessToken;
         $this->client = new Client($this->defaultOption($config));
     }
 
     private function defaultOption($config)
     {
-        if (!isset($config['base_url'])) {
-            $config['base_url'] = self::BASE_URL;
+        if (!isset($config['base_uri'])) {
+            $config['base_uri'] = self::BASE_URL;
         }
         return $config;
     }
@@ -35,7 +40,7 @@ class Request
     /**
      * @param $url
      * @param array $header
-     * @return array
+     * @return Response
      * @throws RequestException
      */
     public function get($url, $header = [])
@@ -46,7 +51,7 @@ class Request
         if ($response->getStatusCode() !== 200) {
             throw new RequestException('failed http get request', $response->getStatusCode());
         }
-        return json_decode($response->getBody()->getContents(), true);
+        return new Response($this, $response);
     }
 
     /**
